@@ -1,0 +1,54 @@
+{
+   "AWSTemplateFormatVersion" : "2010-09-09",
+   "Description" : "Creation of s3 bucket and upload a file and download a file from s3",
+   "Resources" : {
+      "S3_bucket_RootRole": {
+         "Type": "AWS::IAM::Role",
+         "Properties": {
+            "AssumeRolePolicyDocument": {
+               "Statement": [ {
+                  "Effect": "Allow",
+                  "Principal": {
+                     "Service": [ "ec2.amazonaws.com" ]
+                  },
+                  "Action": [ "sts:AssumeRole" ]
+               } ]
+            },
+            "Path": "/"
+         }
+      },
+      "S3_bucket_RootRolePolicies": {
+         "Type": "AWS::IAM::Policy",
+         "Properties": {
+            "PolicyName": "AppServerS3Perms",
+            "PolicyDocument": {
+               "Statement": [ {
+                  "Effect": "Allow",
+                  "Action": "s3:*",
+                  "Resource": { "Fn::Join" : ["", [ "arn:aws:s3:::", { "Ref" : "AppBucket" } , "/*" ]
+                  ] }
+               } ]
+            },
+            "Roles": [ { "Ref": "S3_bucket_RootRole" } ]
+         }
+      },
+      "AppServerInstanceProfile": {
+         "Type": "AWS::IAM::InstanceProfile",
+         "Properties": {
+            "Path": "/",
+            "Roles": [ { "Ref": "S3_bucket_RootRolePolicies" } ]
+         }
+      },
+     "my-rakkesh-bucket" : {
+      "Type" : "AWS::S3::Bucket"
+      }
+   },
+   "Outputs" : {
+       "BucketName" : {
+           "Value" : { "Ref" : "my-rakkesh-bucket" }
+       },
+       "InstanceProfileName" : {
+           "Value" : { "Ref" : "AppServerInstanceProfile" }
+       }
+   }
+}
