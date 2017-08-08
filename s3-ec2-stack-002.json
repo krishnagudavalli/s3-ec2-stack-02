@@ -337,7 +337,7 @@
 			"Type": "AWS::S3::Bucket",
 			"Properties": {
 				"AccessControl": "PublicRead",
-				"BucketName": "my-rakkesh-bucket01"
+				"BucketName": "s3-ec2-stack-02-bucket"
 			}
 		},
 		"InstanceSecurityGroup": {
